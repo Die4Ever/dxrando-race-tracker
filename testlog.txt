@@ -1,4 +1,14 @@
-DXRStats: 10:04 skills: Lockpicking:1, Electronics:2
-ClientMessage: Lockpicking upgraded to MASTER 1:23:45
-DXRStats: 1:24:56 skills: Lockpicking:1, Electronics:2
-DXRStats: 1:27:01 skills: Lockpicking:1, Electronics:2
+
+DXRStats: PlayerAnyEntry 00:00:00.0 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:0, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:0, IFF:0, Light:0, Infolink:0,
+
+JCDentonMale: ClientMessage: Environmental Training upgraded to TRAINED (from -32 to -26) 00:00:48.5
+JCDentonMale: ClientMessage: Swimming upgraded to TRAINED (from 170 to 220) 00:00:49.7
+
+JCDentonMale: ClientMessage: Augmentation Environmental Resistance at level 1 00:01:17.8
+
+DXRStats: PlayerAnyEntry 00:01:25.8 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:1, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:1, Environmental Resistance:0, IFF:0, Light:0, Infolink:0,
+
+JCDentonMale: ClientMessage: Environmental Resistance upgraded to level 2 (from 20% to 39%) 00:01:32.4
+
+JCDentonMale: ClientMessage: Augmentation Speed Enhancement at level 1 00:01:40.8
+JCDentonMale: ClientMessage: Speed Enhancement upgraded to level 2 (from 120% to 135%) 00:01:40.9
