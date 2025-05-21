@@ -40,6 +40,7 @@ def main():
 def handlePlayer(idx:int, player:str, logpath:str):
     state_changes = {}
     logtext = Path(logpath).read_text()
+    last_timestamp = None
     states = {}
     for line in logtext.splitlines():
         ret = checkLogLine(line, states)
@@ -53,6 +54,12 @@ def handlePlayer(idx:int, player:str, logpath:str):
         #print(line)
         #print(timestamp, 'newstates == ', newstates)
         states = newstates
+        if state_changes[timestamp]: # multiple lines for the same timestamp
+            if states == state_changes[last_timestamp]:
+                state_changes.pop(timestamp)
+                continue
+        else:
+            last_timestamp = timestamp
         state_changes[timestamp] = states
     print(state_changes)
 
@@ -92,7 +99,7 @@ def parseAugInstall(line:str, states:dict):
 
 
 def parseAnyEntry(line:str, states:dict):
-    m = re.match(r'DXRStats: PlayerAnyEntry (?P<timestamp>[\d:\.]+) skills/augs: (?P<skills>.+)', line)
+    m = re.match(r'DXRStats:( INFO:)? PlayerAnyEntry (?P<timestamp>[\d:\.]+) skills/augs: (?P<skills>.+)', line)
     if not m:
         return None
     #print(line)
@@ -110,6 +117,53 @@ def parseAnyEntry(line:str, states:dict):
     return (timestamp, states)
 
 
+def parseBingoState(line:str, states:dict):
+    m = re.match(r'DXREvents:( INFO:)? Bingo state (?P<timestamp>[\d:\.]+): (?P<pos>\d, \d), (?P<event>\w+), (?P<progress>\d+), (?P<max>\d+), (?P<mask>[-\d]+), (?P<desc>.+)', line)
+    if not m:
+        return None
+    #print(m.groupdict())
+    states = states.copy()
+    timestamp = m.group('timestamp')
+    states['bingo-'+m.group('pos')] = dict(
+        event=m.group('event'),
+        progress=int(m.group('progress')),
+        max=int(m.group('max')),
+        mask=int(m.group('mask')),
+        desc=m.group('desc'),
+    )
+    return (timestamp, states)
+
+
+def parseBingoProgress(line:str, states:dict):
+    m = re.match(r'PlayerDataItem: IncrementBingoProgress (?P<timestamp>[\d:\.]+) (?P<pos>\d, \d) (?P<event>\w+): (?P<progress>\d+) / (?P<max>\d+) (?P<mask>[-\d]+)', line)
+    if not m:
+        return None
+    #print(m.groupdict())
+    states = states.copy()
+    timestamp = m.group('timestamp')
+    slot = states['bingo-'+m.group('pos')]
+    slot['event'] = m.group('event')
+    slot['progress'] = int(m.group('progress'))
+    slot['max'] = int(m.group('max'))
+    slot['mask'] = int(m.group('mask'))
+    states['bingo-'+m.group('pos')] = slot
+    return (timestamp, states)
+
+
+def parseBingoFailure(line:str, states:dict):
+    m = re.match(r'PlayerDataItem: MarkBingoAsFailed (?P<timestamp>[\d:\.]+) (?P<pos>\d, \d) (?P<event>\w+) (?P<mask>[-\d]+)', line)
+    if not m:
+        return None
+    #print(m.groupdict())
+    states = states.copy()
+    timestamp = m.group('timestamp')
+    slot = states['bingo-'+m.group('pos')]
+    slot['event'] = m.group('event')
+    slot['mask'] = int(m.group('mask'))
+    states['bingo-'+m.group('pos')] = slot
+    return (timestamp, states)
+
+
 def checkLogLine(line:str, states:dict):
     ret = parseUpgrade(line, states)
     if ret:
@@ -119,7 +173,22 @@ def checkLogLine(line:str, states:dict):
     if ret:
         return ret
     
-    return parseAnyEntry(line, states)
+    ret = parseAnyEntry(line, states)
+    if ret:
+        return ret
+    
+    ret = parseBingoState(line, states)
+    if ret:
+        return ret
+    
+    ret = parseBingoProgress(line, states)
+    if ret:
+        return ret
+    
+    ret = parseBingoFailure(line, states)
+    if ret:
+        return ret
+    return None
 
 
 

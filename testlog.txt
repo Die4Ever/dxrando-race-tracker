@@ -1,12 +1,40 @@
 
 DXRStats: PlayerAnyEntry 00:00:00.0 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:0, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:0, IFF:0, Light:0, Infolink:0,
+DXREvents: INFO: Bingo state 00:00:00.0: 0, 0, OceanLabGreenBeacon, 0, 1, 16385, Swim to the green beacon
+DXREvents: INFO: Bingo state 00:00:00.0: 0, 1, EverettAquarium, 0, 1, 2049, Go for a swim in Everett's aquarium
+DXREvents: INFO: Bingo state 00:00:00.0: 0, 2, NotABigFan, 0, 20, 17245, Not a big fan (20)
+DXREvents: INFO: Bingo state 00:00:00.0: 0, 3, Flare_Activated, 0, 15, 0, Light 15 flares
+DXREvents: INFO: Bingo state 00:00:00.0: 0, 4, Area51ElevatorPower, 0, 1, 32769, Power the elevator in Area 51
+DXREvents: INFO: Bingo state 00:00:00.0: 1, 0, Greasel_ClassDead, 0, 5, 50273, Kill 5 Greasels
+DXREvents: INFO: Bingo state 00:00:00.0: 1, 1, Area51SleepingPod, 0, 4, 32769, Open 4 sleeping pods in Area 51
+DXREvents: INFO: Bingo state 00:00:00.0: 1, 2, WarehouseSewerTunnel, 0, 3, 5, Take the sewers to the Warehouse
+DXREvents: INFO: Bingo state 00:00:00.0: 1, 3, MJ12Commando_ClassUnconscious, 0, 2, 56385, Knock out 2 MJ12 Commandos
+DXREvents: INFO: Bingo state 00:00:00.0: 1, 4, GibbedPawn, 0, 13, 0, Blow up 13 people
+DXREvents: INFO: Bingo state 00:00:00.0: 2, 0, VandenbergWaterTower, 0, 1, 4097, Climb the water tower in Vandenberg
+DXREvents: INFO: Bingo state 00:00:00.0: 2, 1, FightSkeletons, 0, 8, 19537, Destroy 8 skeleton parts
+DXREvents: INFO: Bingo state 00:00:00.0: 2, 2, Free Space, 1, 1, 0, Free Space
+DXREvents: INFO: Bingo state 00:00:00.0: 2, 3, PetAnimal_BindName_Starr, 0, 1, 1025, Pet Starr in Paris
+DXREvents: INFO: Bingo state 00:00:00.0: 2, 4, 12_Email04, 0, 1, 4097, Read a motivational email from Gary
+DXREvents: INFO: Bingo state 00:00:00.0: 3, 0, VandenbergGasSwim, 0, 1, 4097, Swim around the Vandenberg gas tanks
+DXREvents: INFO: Bingo state 00:00:00.0: 3, 1, SickMan_PlayerDead, 0, 1, 13, Kill the sick man who wants to die
+DXREvents: INFO: Bingo state 00:00:00.0: 3, 2, JoshFed, 0, 1, 5, Give Josh some food
+DXREvents: INFO: Bingo state 00:00:00.0: 3, 3, HongKongGrays, 0, 1, 65, Enter the Hong Kong Gray enclosure
+DXREvents: INFO: Bingo state 00:00:00.0: 3, 4, MeetTimBaker_Played, 0, 1, 4097, Free Tim from the Vandenberg storage room
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 0, ShipsBridge, 0, 1, 513, Enter the bridge of the superfreighter
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 1, OceanLabFloodedStoreRoom, 0, 1, 16385, Swim to the locked store room in the Ocean Lab
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 2, FanTop, 0, 1, 513, Get blown to the top of the freighter ventilation shaft
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 3, SunkenShip, 0, 1, 3, Enter the sunken ship at Liberty Island
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 4, LouisBerates, 0, 1, 1025, Sneak behind the Porte De L'Enfer door man
 
 JCDentonMale: ClientMessage: Environmental Training upgraded to TRAINED (from -32 to -26) 00:00:48.5
 JCDentonMale: ClientMessage: Swimming upgraded to TRAINED (from 170 to 220) 00:00:49.7
 
 JCDentonMale: ClientMessage: Augmentation Environmental Resistance at level 1 00:01:17.8
 
-DXRStats: PlayerAnyEntry 00:01:25.8 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:1, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:1, Environmental Resistance:0, IFF:0, Light:0, Infolink:0,
+PlayerDataItem: IncrementBingoProgress 00:01:19.3 RepairBot_ClassDead: 3 / 3 0
+
+DXRStats: INFO: PlayerAnyEntry 00:01:25.8 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:1, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:1, Environmental Resistance:0, IFF:0, Light:0, Infolink:0,
+
 
 JCDentonMale: ClientMessage: Environmental Resistance upgraded to level 2 (from 20% to 39%) 00:01:32.4
 
