@@ -20,7 +20,7 @@ DXREvents: INFO: Bingo state 00:00:00.0: 3, 1, SickMan_PlayerDead, 0, 1, 13, Kil
 DXREvents: INFO: Bingo state 00:00:00.0: 3, 2, JoshFed, 0, 1, 5, Give Josh some food
 DXREvents: INFO: Bingo state 00:00:00.0: 3, 3, HongKongGrays, 0, 1, 65, Enter the Hong Kong Gray enclosure
 DXREvents: INFO: Bingo state 00:00:00.0: 3, 4, MeetTimBaker_Played, 0, 1, 4097, Free Tim from the Vandenberg storage room
-DXREvents: INFO: Bingo state 00:00:00.0: 4, 0, ShipsBridge, 0, 1, 513, Enter the bridge of the superfreighter
+DXREvents: INFO: Bingo state 00:00:00.0: 4, 0, ShipsBridge, 0, 1, 513, Enter the bridge of the super freighter
 DXREvents: INFO: Bingo state 00:00:00.0: 4, 1, OceanLabFloodedStoreRoom, 0, 1, 16385, Swim to the locked store room in the Ocean Lab
 DXREvents: INFO: Bingo state 00:00:00.0: 4, 2, FanTop, 0, 1, 513, Get blown to the top of the freighter ventilation shaft
 DXREvents: INFO: Bingo state 00:00:00.0: 4, 3, SunkenShip, 0, 1, 3, Enter the sunken ship at Liberty Island
