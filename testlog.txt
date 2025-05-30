@@ -31,7 +31,7 @@ JCDentonMale: ClientMessage: Swimming upgraded to TRAINED (from 170 to 220) 00:0
 
 JCDentonMale: ClientMessage: Augmentation Environmental Resistance at level 1 00:01:17.8
 
-PlayerDataItem: IncrementBingoProgress 00:01:19.3 RepairBot_ClassDead: 3 / 3 0
+PlayerDataItem: IncrementBingoProgress 00:01:19.3 0, 0 RepairBot_ClassDead: 3 / 3 0
 
 DXRStats: INFO: PlayerAnyEntry 00:01:25.8 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:1, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:1, Environmental Resistance:0, IFF:0, Light:0, Infolink:0,
 

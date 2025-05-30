@@ -1,7 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 #from io import BytesIO
 from pathlib import Path
-import json
 import re
 
 FONT_NAME = "CourierPrimeCode.ttf"
@@ -31,9 +30,11 @@ def main():
     Path('out').mkdir(exist_ok=True)
     MakeLayout()
     idx = 0
-    for (k,v) in players.items():
-        handlePlayer(idx, k, v)
+    states = {}
+    for (player, v) in players.items():
+        states[player] = handlePlayer(idx, player, v)
         idx += 1
+    DrawBingo(states)
 
 
 
@@ -54,17 +55,18 @@ def handlePlayer(idx:int, player:str, logpath:str):
         #print(line)
         #print(timestamp, 'newstates == ', newstates)
         states = newstates
-        if state_changes[timestamp]: # multiple lines for the same timestamp
+        if state_changes.get(timestamp): # multiple lines for the same timestamp
             if states == state_changes[last_timestamp]:
                 state_changes.pop(timestamp)
                 continue
         else:
             last_timestamp = timestamp
         state_changes[timestamp] = states
-    print(state_changes)
+    #print(state_changes)
 
     for (timestamp, state) in state_changes.items():
         MakePlayerImage(idx, player, timestamp, state)
+    return state_changes
 
 
 def parseUpgrade(line:str, states:dict):
@@ -141,7 +143,7 @@ def parseBingoProgress(line:str, states:dict):
     #print(m.groupdict())
     states = states.copy()
     timestamp = m.group('timestamp')
-    slot = states['bingo-'+m.group('pos')]
+    slot = states['bingo-'+m.group('pos')].copy()
     slot['event'] = m.group('event')
     slot['progress'] = int(m.group('progress'))
     slot['max'] = int(m.group('max'))
@@ -157,7 +159,7 @@ def parseBingoFailure(line:str, states:dict):
     #print(m.groupdict())
     states = states.copy()
     timestamp = m.group('timestamp')
-    slot = states['bingo-'+m.group('pos')]
+    slot = states['bingo-'+m.group('pos')].copy()
     slot['event'] = m.group('event')
     slot['mask'] = int(m.group('mask'))
     states['bingo-'+m.group('pos')] = slot
@@ -191,6 +193,21 @@ def checkLogLine(line:str, states:dict):
     return None
 
 
+def timestampToInt(timestamp):
+    m = re.match(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>[\d.]+)', timestamp)
+    seconds = int(m.group('hours'))*3600
+    seconds += int(m.group('minutes'))*60
+    seconds += float(m.group('seconds'))
+    return seconds
+
+def timeToString(time):
+    hours = int(time // 3600)
+    time -= hours * 3600
+    minutes = int(time // 60)
+    time -= minutes * 60
+    seconds = time
+    timestamp = f"{hours:02}:{minutes:02}:{seconds:04.1f}"
+    return timestamp
 
 def MakeLayout():
     global short_augs, short_skills
@@ -227,16 +244,57 @@ def DrawPlayer(gc, col, name, state:dict):
     for skill in all_skills:
         lvl = state.get(skill, 0)
         text += skill_levels[int(lvl)] + '\n'
-    print(text)
+    #print(text)
     DrawColumn(gc, col, name, text, align='center')
 
 
 def DrawColumn(gc:ImageDraw.ImageDraw, col, header, text, align='left'):
     coords = (START_X + col * COL_WIDTH, START_Y)
-    print('DrawColumn', header)
-    print(text)
+    #print('DrawColumn', header)
+    #print(text)
     text = header + '\n' + text
     gc.text(coords, text, font=font, align=align, spacing=30)
+
+
+def GetNextBoard(lastDrawnTime: float, states: dict, prev: list):
+    new = {}
+    nextTime = 86400
+    for (player, v) in states.items(): # check each player
+        for (timestamp, state) in v.items(): # find the next state from any player
+            time = timestampToInt(timestamp)
+            if not state.get('bingo-0, 0'):
+                continue
+            if time > nextTime: # newer than something we just found in this function
+                break
+            if time > lastDrawnTime: # newer than previous draw
+                if time < nextTime:
+                    new = {} # not a tie, so new dict
+                nextTime = time
+                new[player] = state
+                break
+    if not new:
+        return (False, False)
+    new = {**prev, **new} # new player states overwrite old ones, keep the previous states for players we didn't iterate on
+    return (nextTime, new)
+
+
+def DrawBingo(states: dict):
+    print('DrawBingo')
+    lastDrawnTime = -1
+    board = {}
+    while True:
+        (lastDrawnTime, board) = GetNextBoard(lastDrawnTime, states, board)
+        if not board:
+            break
+        DrawBingoBoard(lastDrawnTime, board)
+
+
+def DrawBingoBoard(time: float, board: dict):
+    timestamp = timeToString(time)
+    print('\n\nDrawBingoBoard', timestamp)
+    for (p, b) in board.items():
+        print(p, b['bingo-0, 0'])
+
 
 
 if __name__ == "__main__":
