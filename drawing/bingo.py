@@ -1,6 +1,7 @@
 import re
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
+import random
 
 FONT_NAME = "CourierPrimeCode.ttf"
 
@@ -11,7 +12,7 @@ DEFAULT_BORDER_SIZE = 16 # just used for padding, not line thickness
 
 def DrawBingoBoard(time: float, board: dict):
     timestamp = timeToString(time)
-    print('\n\nDrawBingoBoard', timestamp)
+    #print('\n\nDrawBingoBoard', timestamp)
     bingoDrawer = BingoBoardDrawer(board, DEFAULT_DIMENSION, DEFAULT_FONT_SIZE)
     bingoDrawer.generateBoard()
     outname = 'bingo ' + timestamp.replace(':', '-') + '.png'
@@ -73,17 +74,9 @@ class BingoBoardDrawer:
 
         return [lowerCorner,upperCorner]
 
-    def getTextBoxValue(self,x,y):
-        coords = self.getSquareCoords(x,y)
-        squareSize = self.dimension/5
 
-        boxVal = (coords[0][0],coords[0][1],squareSize,squareSize)
-
-        return boxVal
-
-    def getSquareColour(self,x,y):
-        return "black" # TODO: check each player
-        square = self.board[x][y]
+    def getSquareColour(self, player, x, y):
+        square = self.board[x][y][player]
         if square["progress"]>=square["max"]:
             return MAGIC_GREEN
         else:
@@ -101,7 +94,6 @@ class BingoBoardDrawer:
 
     def drawBingoText(self,boardX,boardY,border,image_draw, **kwargs):
         square = self.board[boardX][boardY]
-        print('before', boardX, boardY, square)
         square = square[self.winners[0]]
         coords = self.getSquareCoords(boardX,boardY)
         text = square["desc"]
@@ -146,12 +138,31 @@ class BingoBoardDrawer:
 
 
 
+    def drawSquare(self, x, y, draw):
+        idx = 0
+        colors = ["#1e641e", "#6e641e", "#1e646e"]
+        for player in self.winners:
+            (nw, se) = self.getSquareCoords(x,y) # NW and SE corners
+            width = se[0] - nw[0]
+            width /= len(self.winners)
+            height = se[1] - nw[1]
+            square = self.board[x][y][player]
+            progress = square['progress'] / square['max']
+            height *= progress
+            nw = (nw[0] + width * idx, se[1] - height)
+            se = (nw[0] + width, se[1])
+            coords = (nw, se)
+            draw.rectangle(coords,fill=colors[idx])
+            idx += 1
+        coords = self.getSquareCoords(x,y) # NW and SE corners
+        draw.rectangle(coords,outline="grey")
+
     def generateBoard(self):
         #print("Generating board")
         draw = ImageDraw.Draw(self.img)
         for x in range(0,5):
             for y in range(0,5):
-                draw.rectangle(self.getSquareCoords(x,y),fill=self.getSquareColour(x,y),outline="grey")
+                self.drawSquare(x, y, draw)
                 self.drawBingoText(x,y,DEFAULT_BORDER_SIZE,draw)
 
     #For testing purposes
