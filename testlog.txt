@@ -1,4 +1,6 @@
 
+DXRFlags: INFO: AnyEntry DX DeusEx.DXRFlags - version: v3.5.0.9 Beta, flagshash: 147723824, seed: 292000, playthrough_id: 2053810, gamemode: 7, difficulty: 0, newgameplus_curve_scalar: 40, newgameplus_total_time: 0, newgameplus_retries_time: 0, maxrando: 0, autosave: 0, crowdcontrol: 0, loadout: 16, newgameplus_loops: 0
+
 DXRStats: PlayerAnyEntry 00:00:00.0 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:0, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:0, IFF:0, Light:0, Infolink:0,
 DXREvents: INFO: Bingo state 00:00:00.0: 0, 0, OceanLabGreenBeacon, 0, 1, 16385, Swim to the green beacon
 DXREvents: INFO: Bingo state 00:00:00.0: 0, 1, EverettAquarium, 0, 1, 2049, Go for a swim in Everett's aquarium
@@ -31,7 +33,7 @@ JCDentonMale: ClientMessage: Swimming upgraded to TRAINED (from 170 to 220) 00:0
 
 JCDentonMale: ClientMessage: Augmentation Environmental Resistance at level 1 00:01:17.8
 
-PlayerDataItem: IncrementBingoProgress 00:01:19.3 0, 0 RepairBot_ClassDead: 3 / 3 0
+PlayerDataItem: IncrementBingoProgress 00:01:19.3 0, 0 OceanLabGreenBeacon: 3 / 3 0
 
 DXRStats: INFO: PlayerAnyEntry 00:01:25.8 skills/augs: Weapons: Heavy:0, Weapons: Pistol:0, Weapons: Rifle:0, Weapons: Low-Tech:0, Weapons: Demolition:0, Environmental Training:1, Lockpicking:0, Electronics:3, Medicine:0, Computer:0, Swimming:1, Environmental Resistance:0, IFF:0, Light:0, Infolink:0,
 

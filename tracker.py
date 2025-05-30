@@ -85,7 +85,17 @@ def parseAugInstall(line:str, states:dict):
     return (timestamp, states)
 
 
+globalFlags = {} # HACK: easier than using lookback in parseAnyEntry, DXRFlags AnyEntry doesn't show timestamp
+def parseFlags(line:str, states:dict):
+    global globalFlags
+    m = re.match(r'DXRFlags: INFO: AnyEntry .+, newgameplus_loops: (?P<newgameplus_loops>\d+)', line)
+    if m:
+        m.groupdict
+        globalFlags = m.groupdict() #{'newgameplus_loops': int(m.group(1))}
+    return None
+
 def parseAnyEntry(line:str, states:dict):
+    global globalFlags
     m = re.match(r'DXRStats:( INFO:)? PlayerAnyEntry (?P<timestamp>[\d:\.]+) skills/augs: (?P<skills>.+)', line)
     if not m:
         return None
@@ -95,7 +105,7 @@ def parseAnyEntry(line:str, states:dict):
     skillslist = m.group('skills').split(', ')
     if not skillslist:
         return None
-    states = dict() # states.copy() # start fresh, to delete no-longer existing augs
+    states = globalFlags.copy() # start fresh, to delete no-longer existing augs
     for namelvl in skillslist:
         m = re.match(r'(.+):(\d)', namelvl)
         name = m.group(1)
@@ -152,6 +162,10 @@ def parseBingoFailure(line:str, states:dict):
 
 
 def checkLogLine(line:str, states:dict):
+    ret = parseFlags(line, states)
+    if ret:
+        return ret
+    
     ret = parseUpgrade(line, states)
     if ret:
         return ret
@@ -190,8 +204,8 @@ def GetNextBoard(lastDrawnTime: float, states: dict, prev: list):
                 break
             if time > lastDrawnTime: # newer than previous draw
                 if time < nextTime:
+                    nextTime = time
                     new = {} # not a tie, so new dict
-                nextTime = time
                 new[player] = state
                 break
     if not new:

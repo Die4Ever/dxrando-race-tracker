@@ -40,17 +40,24 @@ class BingoBoardDrawer:
     def __init__(self,eventJson,dimension,fontsize):
         self.board = [[None]*5 for i in range(5)]
         self.dimension = dimension
+        self.winners = []
         self.font = ImageFont.truetype(FONT_NAME,fontsize)
         self.img = Image.new("RGB",(dimension,dimension))
         self.loadBingoEvents(eventJson)
 
 
     def loadBingoEvents(self,eventJson):
+        highest_ngplus_loops = 0
         for x in range(0,5):
             for y in range(0,5):
                 self.board[x][y]={}
         
         for (player, board) in eventJson.items():
+            ngplus_loops = int(board['newgameplus_loops'])
+            if ngplus_loops > highest_ngplus_loops:
+                highest_ngplus_loops = ngplus_loops
+                self.winners = []
+            self.winners.append(player)
             for x in range(0,5):
                 for y in range(0,5):
                     bingoTag = "bingo-"+str(x)+", "+str(y)
@@ -95,7 +102,7 @@ class BingoBoardDrawer:
     def drawBingoText(self,boardX,boardY,border,image_draw, **kwargs):
         square = self.board[boardX][boardY]
         print('before', boardX, boardY, square)
-        square = square[list(square.keys())[0]]
+        square = square[self.winners[0]]
         coords = self.getSquareCoords(boardX,boardY)
         text = square["desc"]
         #if square["max"]>1: # TODO
