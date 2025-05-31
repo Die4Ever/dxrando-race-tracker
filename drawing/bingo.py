@@ -1,7 +1,6 @@
 import re
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
-import random
 
 FONT_NAME = "CourierPrimeCode.ttf"
 
@@ -132,6 +131,9 @@ class BingoBoardDrawer:
                 (int(x + x_offset), int(y + y_offset)),
                 line,
                 font=self.font,
+                fill="white",
+                stroke_width=2,
+                stroke_fill="black",
                 **kwargs
                 )
             y_offset += lineheight
@@ -140,7 +142,7 @@ class BingoBoardDrawer:
 
     def drawSquare(self, x, y, draw):
         idx = 0
-        colors = ["#1e641e", "#6e641e", "#1e646e"]
+        colors = ["#1e642e", "#6e440e", "#1e546e"]
         for player in self.winners:
             (nw, se) = self.getSquareCoords(x,y) # NW and SE corners
             width = se[0] - nw[0]
@@ -167,7 +169,7 @@ class BingoBoardDrawer:
 
     #For testing purposes
     def saveBoard(self, outpath):
-        self.img=self.img.convert('RGB')
+        #self.img=self.img.convert('RGB')
         self.img.save(outpath)
 
     #For testing purposes
