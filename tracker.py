@@ -114,8 +114,9 @@ def parseAnyEntry(line:str, states:dict):
     return (timestamp, states)
 
 
+bingoPos = r'(?P<pos>\d, \d)(?P<oopsMissingCast>\.0+)?'
 def parseBingoState(line:str, states:dict):
-    m = re.match(r'DXREvents:( INFO:)? Bingo state (?P<timestamp>[\d:\.]+): (?P<pos>\d, \d), (?P<event>[\w ]+), (?P<progress>\d+), (?P<max>\d+), (?P<mask>[-\d]+), (?P<desc>.+)', line)
+    m = re.match(r'DXREvents:( INFO:)? Bingo state (?P<timestamp>[\d:\.]+): '+bingoPos+r', (?P<event>[\w ]+), (?P<progress>\d+), (?P<max>\d+), (?P<mask>[-\d]+), (?P<desc>.+)', line)
     if not m:
         return None
     #print(m.groupdict())
@@ -132,7 +133,7 @@ def parseBingoState(line:str, states:dict):
 
 
 def parseBingoProgress(line:str, states:dict):
-    m = re.match(r'PlayerDataItem: IncrementBingoProgress (?P<timestamp>[\d:\.]+) (?P<pos>\d, \d) (?P<event>\w+): (?P<progress>\d+) / (?P<max>\d+) (?P<mask>[-\d]+)', line)
+    m = re.match(r'PlayerDataItem: IncrementBingoProgress (?P<timestamp>[\d:\.]+) '+bingoPos+r' (?P<event>\w+): (?P<progress>\d+) / (?P<max>\d+) (?P<mask>[-\d]+)', line)
     if not m:
         return None
     #print(m.groupdict())
@@ -148,16 +149,19 @@ def parseBingoProgress(line:str, states:dict):
 
 
 def parseBingoFailure(line:str, states:dict):
-    m = re.match(r'PlayerDataItem: MarkBingoAsFailed (?P<timestamp>[\d:\.]+) (?P<pos>\d, \d) (?P<event>\w+) (?P<mask>[-\d]+)', line)
+    m = re.match(r'PlayerDataItem: MarkBingoAsFailed (?P<timestamp>[\d:\.]+) '+bingoPos+r' (?P<event>\w+) (?P<mask>[-\d]+)', line)
     if not m:
         return None
     #print(m.groupdict())
     states = states.copy()
     timestamp = m.group('timestamp')
-    slot = states['bingo-'+m.group('pos')].copy()
+    key = 'bingo-'+m.group('pos')
+    if key not in states:
+        return None # bingo failures log right before bingo state updates
+    slot = states[key].copy()
     slot['event'] = m.group('event')
     slot['mask'] = int(m.group('mask'))
-    states['bingo-'+m.group('pos')] = slot
+    states[key] = slot
     return (timestamp, states)
 
 
