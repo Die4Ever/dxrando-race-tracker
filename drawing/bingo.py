@@ -150,7 +150,7 @@ class BingoBoardDrawer:
             height = se[1] - nw[1]
             square = self.board[x][y][player]
             progress = square['progress'] / square['max']
-            height *= progress
+            height *= min(progress, 1)
             nw = (nw[0] + width * idx, se[1] - height)
             se = (nw[0] + width, se[1])
             coords = (nw, se)
