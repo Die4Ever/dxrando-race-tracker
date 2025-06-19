@@ -41,6 +41,7 @@ class BingoBoardDrawer:
         self.board = [[None]*5 for i in range(5)]
         self.dimension = dimension
         self.winners = []
+        self.players = []
         self.font = ImageFont.truetype(FONT_NAME,fontsize)
         self.img = Image.new("RGB",(dimension,dimension))
         self.loadBingoEvents(eventJson)
@@ -53,11 +54,14 @@ class BingoBoardDrawer:
                 self.board[x][y]={}
         
         for (player, board) in eventJson.items():
+            self.players.append(player)
             ngplus_loops = int(board['newgameplus_loops'])
+            #print('loadBingoEvents', player, ngplus_loops)
             if ngplus_loops > highest_ngplus_loops:
                 highest_ngplus_loops = ngplus_loops
                 self.winners = []
-            self.winners.append(player)
+            if ngplus_loops == highest_ngplus_loops:
+                self.winners.append(player)
             for x in range(0,5):
                 for y in range(0,5):
                     bingoTag = "bingo-"+str(x)+", "+str(y)
@@ -93,7 +97,11 @@ class BingoBoardDrawer:
 
     def drawBingoText(self,boardX,boardY,border,image_draw, **kwargs):
         square = self.board[boardX][boardY]
-        square = square[self.winners[0]]
+        #square = list(square.values())[0]
+        square = square.get(self.winners[0])
+        if not square:
+            print('drawBingoText missing', self.winners[0], 'in', boardX, boardY, repr(self.board))
+            return
         coords = self.getSquareCoords(boardX,boardY)
         text = square["desc"]
         #if square["max"]>1: # TODO
@@ -141,21 +149,27 @@ class BingoBoardDrawer:
 
 
     def drawSquare(self, x, y, draw):
-        idx = 0
+        idx = -1
         colors = ["#1e642e", "#6e440e", "#1e546e"]
-        for player in self.winners:
+        for player in self.players:
+            idx += 1
+            if player not in self.winners:
+                continue
+            square = self.board[x][y].get(player)
+            if not square:
+                print('drawSquare missing', player, 'in', x, y, repr(self.board[x][y]))
+                print(repr(self.board))
+                continue
             (nw, se) = self.getSquareCoords(x,y) # NW and SE corners
             width = se[0] - nw[0]
-            width /= len(self.winners)
+            width /= len(self.players)
             height = se[1] - nw[1]
-            square = self.board[x][y][player]
             progress = square['progress'] / square['max']
             height *= min(progress, 1)
             nw = (nw[0] + width * idx, se[1] - height)
             se = (nw[0] + width, se[1])
             coords = (nw, se)
             draw.rectangle(coords,fill=colors[idx])
-            idx += 1
         coords = self.getSquareCoords(x,y) # NW and SE corners
         draw.rectangle(coords,outline="grey")
 
