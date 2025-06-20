@@ -9,11 +9,16 @@ DEFAULT_DIMENSION = 1080
 DEFAULT_FONT_SIZE = 28
 DEFAULT_BORDER_SIZE = 16 # just used for padding, not line thickness
 
+prevBoard = None
 def DrawBingoBoard(time: float, board: dict):
+    global prevBoard
     timestamp = timeToString(time)
     #print('\n\nDrawBingoBoard', timestamp)
     bingoDrawer = BingoBoardDrawer(board, DEFAULT_DIMENSION, DEFAULT_FONT_SIZE)
     bingoDrawer.generateBoard()
+    if bingoDrawer.img == prevBoard:
+        return
+    prevBoard = bingoDrawer.img
     outname = 'bingo ' + timestamp.replace(':', '-') + '.png'
     outpath = Path('out') / outname
     bingoDrawer.saveBoard(outpath)

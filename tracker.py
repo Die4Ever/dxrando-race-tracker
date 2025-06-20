@@ -196,7 +196,7 @@ def checkLogLine(line:str, states:dict):
     return None
 
 
-def GetNextBoard(lastDrawnTime: float, states: dict, prev: list):
+def GetNextBoard(lastDrawnTime: float, states: dict, prev: dict):
     new = {}
     nextTime = 86400
     for (player, v) in states.items(): # check each player

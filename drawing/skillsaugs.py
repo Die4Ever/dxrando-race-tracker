@@ -33,12 +33,17 @@ def MakeLayout():
     img.save(outname)
 
 
+prevImg = None
 def MakePlayerImage(col, player, timestamp, state):
+    global prevImg
     img = Image.new("RGBA", (IMAGE_WIDTH, IMAGE_HEIGHT))#, 'black')
     gc = ImageDraw.Draw(img)
     DrawPlayer(gc, col, player, state)
     outname = player + ' ' + timestamp.replace(':', '-') + '.png'
     outpath = Path('out') / outname
+    if img == prevImg:
+        return
+    prevImg = img
     img.save(outpath)
 
 def DrawPlayer(gc, col, name, state:dict):
