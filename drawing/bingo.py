@@ -9,19 +9,21 @@ DEFAULT_DIMENSION = 1080
 DEFAULT_FONT_SIZE = 28
 DEFAULT_BORDER_SIZE = 16 # just used for padding, not line thickness
 
-prevBoard = None
+prevBoards = dict()
 def DrawBingoBoard(time: float, board: dict):
-    global prevBoard
+    global prevBoards
     timestamp = timeToString(time)
     #print('\n\nDrawBingoBoard', timestamp)
     bingoDrawer = BingoBoardDrawer(board, DEFAULT_DIMENSION, DEFAULT_FONT_SIZE)
-    bingoDrawer.generateBoard()
-    if bingoDrawer.img == prevBoard:
-        return
-    prevBoard = bingoDrawer.img
-    outname = 'bingo ' + timestamp.replace(':', '-') + '.png'
-    outpath = Path('out') / outname
-    bingoDrawer.saveBoard(outpath)
+    bingoDrawer.generateBoards()
+    for player, img in bingoDrawer.imgs.items():
+        if img == prevBoards.get(player):
+            continue
+        prevBoards[player] = img
+        outname = 'bingo ' + player + ' ' + timestamp.replace(':', '-') + '.png'
+        outpath = Path('out') / outname
+        bingoDrawer.saveBoard(player, outpath)
+
 
 def timestampToInt(timestamp):
     m = re.match(r'(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>[\d.]+)', timestamp)
@@ -48,7 +50,7 @@ class BingoBoardDrawer:
         self.winners = []
         self.players = []
         self.font = ImageFont.truetype(FONT_NAME,fontsize)
-        self.img = Image.new("RGB",(dimension,dimension))
+        self.imgs = dict()
         self.loadBingoEvents(eventJson)
 
 
@@ -100,12 +102,12 @@ class BingoBoardDrawer:
         #info("Line '"+line+"' is "+str(width)+" by "+str(height))
         return (width,height)
 
-    def drawBingoText(self,boardX,boardY,border,image_draw, **kwargs):
+    def drawBingoText(self,boardX,boardY,border,image_draw,player, **kwargs):
         square = self.board[boardX][boardY]
         #square = list(square.values())[0]
-        square = square.get(self.winners[0])
+        square = square.get(player)
         if not square:
-            print('drawBingoText missing', self.winners[0], 'in', boardX, boardY, repr(self.board))
+            print('drawBingoText missing', player, 'in', boardX, boardY, repr(self.board))
             return
         coords = self.getSquareCoords(boardX,boardY)
         text = square["desc"]
@@ -155,42 +157,53 @@ class BingoBoardDrawer:
 
     def drawSquare(self, x, y, draw):
         idx = -1
-        colors = ["#1e642e", "#6e440e", "#1e546e"]
         for player in self.players:
             idx += 1
             if player not in self.winners:
                 continue
-            square = self.board[x][y].get(player)
-            if not square:
-                print('drawSquare missing', player, 'in', x, y, repr(self.board[x][y]))
-                print(repr(self.board))
-                continue
-            (nw, se) = self.getSquareCoords(x,y) # NW and SE corners
-            width = se[0] - nw[0]
-            width /= len(self.players)
-            height = se[1] - nw[1]
-            progress = square['progress'] / square['max']
-            height *= min(progress, 1)
-            nw = (nw[0] + width * idx, se[1] - height)
-            se = (nw[0] + width, se[1])
-            coords = (nw, se)
-            draw.rectangle(coords,fill=colors[idx])
+            self.drawSquarePlayer(x, y, draw, player, idx)
+
+
+    def drawSquarePlayer(self, x, y, draw, player, idx):
+        colors = ["#1e642e", "#6e440e", "#1e546e"]
+        color = colors[idx]
+        square = self.board[x][y].get(player)
+        if not square:
+            print('drawSquare missing', player, 'in', x, y, repr(self.board[x][y]))
+            print(repr(self.board))
+            return
+        (nw, se) = self.getSquareCoords(x,y) # NW and SE corners
+        width = se[0] - nw[0]
+        width /= len(self.players)
+        height = se[1] - nw[1]
+        progress = square['progress'] / square['max']
+        height *= min(progress, 1)
+        nw = (nw[0] + width * idx, se[1] - height)
+        se = (nw[0] + width, se[1])
+        coords = (nw, se)
+        draw.rectangle(coords,fill=color)
         coords = self.getSquareCoords(x,y) # NW and SE corners
         draw.rectangle(coords,outline="grey")
 
-    def generateBoard(self):
+
+    def generateBoards(self):
         #print("Generating board")
-        draw = ImageDraw.Draw(self.img)
-        for x in range(0,5):
-            for y in range(0,5):
-                self.drawSquare(x, y, draw)
-                self.drawBingoText(x,y,DEFAULT_BORDER_SIZE,draw)
+        idx = -1
+        for player in self.players:
+            idx += 1
+            img = Image.new("RGBA",(self.dimension,self.dimension))
+            draw = ImageDraw.Draw(img)
+            for x in range(0,5):
+                for y in range(0,5):
+                    self.drawSquarePlayer(x, y, draw, player, idx)
+                    self.drawBingoText(x,y,DEFAULT_BORDER_SIZE,draw, player)
+            self.imgs[player] = img
 
     #For testing purposes
-    def saveBoard(self, outpath):
+    def saveBoard(self, player, outpath):
         #self.img=self.img.convert('RGB')
-        self.img.save(outpath)
+        self.imgs[player].save(outpath)
 
     #For testing purposes
-    def showBoard(self):
-        self.img.show()
+    #def showBoard(self):
+    #    self.img.show()
